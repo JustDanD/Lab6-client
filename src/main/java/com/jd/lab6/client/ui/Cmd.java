@@ -1,9 +1,11 @@
 package com.jd.lab6.client.ui;
 
+import java.io.*;
 import java.util.HashMap;
 import java.util.Scanner;
 import java.util.TreeSet;
 
+import com.jd.lab6.client.net.TCP;
 import com.jd.lab6.commands.*;
 
 public  class Cmd {
@@ -43,6 +45,11 @@ public  class Cmd {
                     Command executedCom = (Command) (command.getConstructor(params).newInstance(curArgs, null));
                     if (executedCom instanceof ExitCommand)
                         executedCom.execute();
+                    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                    ObjectOutputStream ois = new ObjectOutputStream(bytes);
+                    ois.writeObject(executedCom);
+                    TCP.sendCommand(bytes);
+                    System.out.println(TCP.waitCallback());
                 } else
                     System.out.println("Такой команды не существует");
             } catch (Exception e) {
