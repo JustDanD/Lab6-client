@@ -1,0 +1,5 @@
+show
+add {"name":"Charly","coordinates":{"x":"100","y":"-150"},"health":"222","heartCount":"2","loyal":"false","meleeWeapon":"POWER_SWORD","chapter":{"name":"Anubis","parentLegion":"Legion"}}
+show
+execute_script src/test/testfiles/script1
+add_if_min {"name":"Charly","coordinates":{"x":"-1000","y":"-150"},"health":"222","heartCount":"2","loyal":"false","meleeWeapon":"POWER_SWORD","chapter":{"name":"Anubis","parentLegion":"Legion"}}

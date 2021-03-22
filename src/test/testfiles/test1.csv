@@ -1,0 +1,3 @@
+id;name;coordinates;creationDate;health;heartCount;loyal;meleeWeapon;chapter
+1;Lux;151,-100;2021-02-20;100;2;true;POWER_FIST;chars,first
+2;Luxa;151,-150;2021-02-20;100;2;true;POWER_FIST;charss,first

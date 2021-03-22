@@ -1,0 +1,5 @@
+id;name;coordinates;creationDate;health;heartCount;loyal;meleeWeapon;chapter
+5;Charly;-1000,-150.0;2021-00-23;222;2;false;POWER_SWORD;Anubis,Legion
+3;Charly;100,-150.0;2021-00-23;222;2;false;POWER_SWORD;Anubis,Legion
+2;Luxa;151,-150.0;2021-00-20;100;2;true;POWER_FIST;charss,first
+1;Lux;151,-100.0;2021-00-20;100;2;true;POWER_FIST;chars,first

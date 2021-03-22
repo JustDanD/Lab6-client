@@ -8,7 +8,7 @@ import java.util.TreeSet;
 import com.jd.lab6.client.net.TCP;
 import com.jd.lab6.commands.*;
 
-public  class Cmd {
+public class Cmd {
     private static final HashMap<String, Class<? extends Command>> commandsMap;
 
     static {
@@ -34,7 +34,7 @@ public  class Cmd {
         Scanner in = new Scanner(System.in);
         String curCom = "";
         String[] curArgs;
-        Class[] params = {String[].class, TreeSet.class};
+        Class[] params = {String[].class, TreeSet.class, boolean.class};
         System.out.println("Доброго времени суток, уважаемый юзер.\nДобро пожаловать в систему управления вашей коллекцией космических корбалей!\nПриятного пользования!\nДля просмотра существующих команд введите help.");
         while (true) {
             try {
@@ -42,14 +42,20 @@ public  class Cmd {
                 curArgs = in.nextLine().replaceAll(" +", " ").split(" ");
                 Class<? extends Command> command = commandsMap.get(curCom);
                 if (command != null) {
-                    Command executedCom = (Command) (command.getConstructor(params).newInstance(curArgs, null));
-                    if (executedCom instanceof ExitCommand)
+                    Command executedCom = (command.getConstructor(params).newInstance(curArgs, null, true));
+                    if (executedCom instanceof ExitCommand) {
+                        TCP.closeConnection();
                         executedCom.execute();
-                    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                    ObjectOutputStream ois = new ObjectOutputStream(bytes);
-                    ois.writeObject(executedCom);
-                    TCP.sendCommand(bytes);
-                    System.out.println(TCP.waitCallback());
+                    }
+                    if (executedCom.getValid()) {
+                        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                        ObjectOutputStream ois = new ObjectOutputStream(bytes);
+                        ois.writeObject(executedCom);
+                        TCP.sendCommand(bytes);
+                        System.out.println(TCP.waitResponse());
+                    }
+                    else
+                        System.out.println("Команда невалидна");
                 } else
                     System.out.println("Такой команды не существует");
             } catch (Exception e) {
