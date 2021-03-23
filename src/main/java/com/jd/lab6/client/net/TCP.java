@@ -1,27 +1,21 @@
 package com.jd.lab6.client.net;
 
-import com.sun.xml.internal.ws.api.ha.StickyFeature;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.net.InetSocketAddress;
-import java.net.SocketAddress;
+import java.io.*;
+import java.net.Socket;
 import java.nio.ByteBuffer;
-import java.nio.channels.SocketChannel;
 
 public class TCP {
-    private static SocketChannel socket;
+    private static Socket socket;
+    private static boolean isLastConnectionSuccessful;
 
     public static void openConnection(String address, int port) {
         if (address != null && port != 0) {
-            SocketAddress addr = new InetSocketAddress(address, port);
             try {
-                socket = SocketChannel.open(addr);
+                socket = new Socket(address, port);
             } catch (java.io.IOException e) {
-                System.out.println(e.getMessage());
+                return;
             }
+            isLastConnectionSuccessful = true;
         }
     }
 
@@ -33,27 +27,38 @@ public class TCP {
         }
     }
 
-    public static void sendCommand(ByteArrayOutputStream out) {
-        byte[] b = out.toByteArray();
-        ByteBuffer buf = ByteBuffer.wrap(b);
+    public static boolean sendCommand(ByteArrayOutputStream out) {
+        byte[] buffer = out.toByteArray();
+        ByteBuffer buf = ByteBuffer.wrap(buffer);
         try {
-            socket.write(buf);
+            if (socket == null || !isLastConnectionSuccessful)
+                TCP.openConnection("localhost", 2222);
+            if (socket == null)
+                throw new IOException();
+            OutputStream requestStream = socket.getOutputStream();
+            requestStream.write(buffer);
+            isLastConnectionSuccessful = true;
+            return true;
         } catch (java.io.IOException e) {
-            System.out.println(e.getMessage());
+            System.out.println("Ошибка соединения с сервером. Возможно, сервер временно недоступен или выключен");
+            isLastConnectionSuccessful = false;
+            return false;
         }
     }
 
     public static String waitResponse() {
-        ByteBuffer responseBuf = ByteBuffer.wrap(new byte[10000]);
-        String b;
+        byte[] buffer = new byte[10000];
         try {
-            socket.read(responseBuf);
-            ByteArrayInputStream responseBytes = new ByteArrayInputStream(responseBuf.array());
+            InputStream responseStream = socket.getInputStream();
+            responseStream.read(buffer);
+            ByteArrayInputStream responseBytes = new ByteArrayInputStream(buffer);
             ObjectInputStream ois = new ObjectInputStream(responseBytes);
             return (String) ois.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            System.out.println(e.getMessage());
+        } catch (IOException e) {
+            isLastConnectionSuccessful = false;
+            return "Ошибка получения ответа от сервера.";
+        } catch (ClassNotFoundException e) {
+            return "Битый ответ сервера";
         }
-        return "Empty output";
     }
 }

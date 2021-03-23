@@ -1,12 +1,13 @@
 package com.jd.lab6.client.ui;
 
-import java.io.*;
+import com.jd.lab6.client.net.TCP;
+import com.jd.lab6.commands.*;
+
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Scanner;
 import java.util.TreeSet;
-
-import com.jd.lab6.client.net.TCP;
-import com.jd.lab6.commands.*;
 
 public class Cmd {
     private static final HashMap<String, Class<? extends Command>> commandsMap;
@@ -51,10 +52,9 @@ public class Cmd {
                         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
                         ObjectOutputStream ois = new ObjectOutputStream(bytes);
                         ois.writeObject(executedCom);
-                        TCP.sendCommand(bytes);
-                        System.out.println(TCP.waitResponse());
-                    }
-                    else
+                        if (TCP.sendCommand(bytes))
+                            System.out.println(TCP.waitResponse());
+                    } else
                         System.out.println("Команда невалидна");
                 } else
                     System.out.println("Такой команды не существует");
