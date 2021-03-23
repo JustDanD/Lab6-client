@@ -1,5 +1,6 @@
 package com.jd.lab6.client.net;
 
+
 import java.io.*;
 import java.net.Socket;
 import java.nio.ByteBuffer;
@@ -47,6 +48,7 @@ public class TCP {
     }
 
     public static String waitResponse() {
+        ByteBuffer responseBuf = ByteBuffer.wrap(new byte[10000]);
         byte[] buffer = new byte[10000];
         try {
             InputStream responseStream = socket.getInputStream();
