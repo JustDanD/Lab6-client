@@ -54,9 +54,8 @@ public class Cmd {
                         ois.writeObject(executedCom);
                         if (TCP.sendCommand(bytes))
                             System.out.println(TCP.waitResponse());
-                        else
-                            System.out.println("Команда невалидна");
-                    }
+                    } else
+                        System.out.println("Команда невалидна");
                 } else
                     System.out.println("Такой команды не существует");
             } catch (Exception e) {
