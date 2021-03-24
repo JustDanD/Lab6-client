@@ -33,7 +33,7 @@ public class Cmd {
 
     public static void listen() {
         Scanner in = new Scanner(System.in);
-        String curCom = "";
+        String curCom;
         String[] curArgs;
         Class[] params = {String[].class, TreeSet.class, boolean.class};
         System.out.println("Доброго времени суток, уважаемый юзер.\nДобро пожаловать в систему управления вашей коллекцией космических корбалей!\nПриятного пользования!\nДля просмотра существующих команд введите help.");
